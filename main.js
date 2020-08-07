@@ -9,7 +9,7 @@ const path = require("path")
 //     hardResetMethod: "exit",
 //   })
 // }
-let mainWindow
+let mainWindow, aboutWindow
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     title: "Image Shrinker",
@@ -20,18 +20,59 @@ function createMainWindow() {
   })
   mainWindow.loadFile("./app/index.html")
 }
+function createAboutWindow() {
+  aboutWindow = new BrowserWindow({
+    title: "About Image Shrinker",
+    width: 300,
+    height: 300,
+    icon: "./assets/icons/icon_128x128.png",
+    resizable: false,
+  })
+  aboutWindow.loadFile("./app/about.html")
+}
 const menu = [
-  ...(isMac ? [{ role: "appMenu" }] : []),
+  ...(isMac
+    ? [
+        {
+          label: app.name,
+          submenu: [
+            {
+              label: "About",
+              click: createAboutWindow,
+            },
+          ],
+        },
+      ]
+    : []),
   {
-    label: "File",
-    submenu: [
-      {
-        label: "quit",
-        accelerator: "CmdOrCtrl+W",
-        click: app.quit,
-      },
-    ],
+    role: "fileMenu",
   },
+  ...(!isMac
+    ? [
+        {
+          label: "help",
+          submenu: [
+            {
+              label: "about",
+              click: createAboutWindow,
+            },
+          ],
+        },
+      ]
+    : []),
+  ...(isDev
+    ? [
+        {
+          label: "Developer",
+          submenu: [
+            { role: "reload" },
+            { role: "forcereload" },
+            { type: "separator" },
+            { role: "toggledevtools" },
+          ],
+        },
+      ]
+    : []),
 ]
 app.on("window-all-closed", () => {
   if (!isMac) {
@@ -45,10 +86,10 @@ app.on("activate", () => {
 })
 app.on("ready", () => {
   createMainWindow()
-  globalShortcut.register("CmdOrCtrl+R", () => mainWindow.reload())
-  globalShortcut.register(isMac ? "Cmd+Alt+I" : "Ctrl+Shift+I", () =>
-    mainWindow.toggleDevTools()
-  )
+  // globalShortcut.register("CmdOrCtrl+R", () => mainWindow.reload())
+  // globalShortcut.register(isMac ? "Cmd+Alt+I" : "Ctrl+Shift+I", () =>
+  //   mainWindow.toggleDevTools()
+  // )
   const mainMenu = Menu.buildFromTemplate(menu)
   Menu.setApplicationMenu(mainMenu)
   app.on("closed", () => (mainWindow = null))
