@@ -16,7 +16,10 @@ function createMainWindow() {
     width: 500,
     height: 600,
     icon: "./assets/icons/icon_128x128.png",
-    resizable: isDev, //if development, resizable is true otherwise false
+    resizable: isDev, //if development, resizable is true otherwise false,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   })
   mainWindow.loadFile("./app/index.html")
 }
