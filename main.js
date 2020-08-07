@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, globalShortcut } = require("electron")
+const { app, BrowserWindow, Menu, ipcMain } = require("electron")
 process.env.NODE_ENV = "development"
 const isDev = process.env.NODE_ENV !== "production" ? true : false
 const isMac = process.platform === "darwin" ? true : false
@@ -77,6 +77,9 @@ const menu = [
       ]
     : []),
 ]
+ipcMain.on("img:minimize", (e, options) => {
+  console.log(options)
+})
 app.on("window-all-closed", () => {
   if (!isMac) {
     app.quit()
