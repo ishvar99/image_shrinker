@@ -4,7 +4,8 @@
   "description": "A software to compress image size",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "nodemon --exec electron ."
   },
   "repository": {
     "type": "git",
@@ -13,7 +14,8 @@
   "author": "Ishan Varshney",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^9.1.2"
+    "electron": "^9.1.2",
+    "nodemon": "^2.0.4"
   },
   "dependencies": {
     "electron-reload": "^1.5.0"

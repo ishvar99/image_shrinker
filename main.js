@@ -1,25 +1,37 @@
-const { app, BrowserWindow } = require("electron")
+const { app, BrowserWindow, Menu } = require("electron")
 process.env.NODE_ENV = "development"
 const isDev = process.env.NODE_ENV !== "production" ? true : false
 const isMac = process.platform === "darwin" ? true : false
 const path = require("path")
-if (isDev) {
-  require("electron-reload")(__dirname, {
-    electron: path.join(__dirname, "node_modules", ".bin", "electron.cmd"),
-    hardResetMethod: "exit",
-  })
-}
+// if (isDev) {
+//   require("electron-reload")(__dirname, {
+//     electron: path.join(__dirname, "node_modules", ".bin", "electron.cmd"),
+//     hardResetMethod: "exit",
+//   })
+// }
 let mainWindow
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     title: "Image Shrinker",
-    width: 400,
+    width: 500,
     height: 600,
-    // icon: "./assets/icons/icon_128x128.png",
+    icon: "./assets/icons/icon_128x128.png",
     resizable: isDev, //if development, resizable is true otherwise false
   })
   mainWindow.loadFile("./app/index.html")
 }
+const menu = [
+  ...(isMac ? [{ role: "appMenu" }] : []),
+  {
+    label: "File",
+    submenu: [
+      {
+        label: "quit",
+        click: app.quit,
+      },
+    ],
+  },
+]
 app.on("window-all-closed", () => {
   if (!isMac) {
     app.quit()
@@ -30,4 +42,9 @@ app.on("activate", () => {
     createMainWindow()
   }
 })
-app.on("ready", createMainWindow)
+app.on("ready", () => {
+  createMainWindow()
+  const mainMenu = Menu.buildFromTemplate(menu)
+  Menu.setApplicationMenu(mainMenu)
+  app.on("closed", () => (mainWindow = null))
+})
