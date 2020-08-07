@@ -1,11 +1,12 @@
 const path = require("path")
 const os = require("os")
+const log = require("electron-log")
 const { app, BrowserWindow, Menu, ipcMain, shell } = require("electron")
 const imagemin = require("imagemin")
 const imageminMozjpeg = require("imagemin-mozjpeg")
 const imageminPngquant = require("imagemin-pngquant")
 const slash = require("slash")
-process.env.NODE_ENV = "development"
+process.env.NODE_ENV = "production"
 const isDev = process.env.NODE_ENV !== "production" ? true : false
 const isMac = process.platform === "darwin" ? true : false
 // if (isDev) {
@@ -20,7 +21,7 @@ function createMainWindow() {
     title: "Image Shrinker",
     width: 500,
     height: 600,
-    icon: "./assets/icons/icon_128x128.png",
+    // icon: "./assets/icons/icon_128x128.png",
     resizable: isDev, //if development, resizable is true otherwise false,
     webPreferences: {
       nodeIntegration: true,
@@ -99,9 +100,11 @@ async function minimizeImage({ imgPath, quality, destination }) {
         }),
       ],
     })
+    log.info(files)
     shell.openPath(destination)
+    mainWindow.webContents.send("img:done")
   } catch (error) {
-    console.log(error)
+    log.error(error)
   }
 }
 app.on("window-all-closed", () => {

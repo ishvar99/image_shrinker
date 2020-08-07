@@ -68,6 +68,11 @@
         const quality = slider.value
         console.log(imgPath, quality)
         ipcRenderer.send("img:minimize", { imgPath, quality })
+        ipcRenderer.on("img:done", () => {
+          M.toast({
+            html: `Image resized to ${quality}% quality`,
+          })
+        })
       })
     </script>
   </body>
